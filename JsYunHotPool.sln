@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "JsYunHotPool", "JsYunHotPool.njsproj", "{7ED228C1-3A79-4864-82D5-6FF71194E7A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7ED228C1-3A79-4864-82D5-6FF71194E7A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ED228C1-3A79-4864-82D5-6FF71194E7A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ED228C1-3A79-4864-82D5-6FF71194E7A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ED228C1-3A79-4864-82D5-6FF71194E7A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B09A641-6A42-465E-B117-4A4AFA469A19}
+	EndGlobalSection
+EndGlobal
