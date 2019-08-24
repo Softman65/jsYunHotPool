@@ -20,10 +20,11 @@ Console Read example for YunShield/Yún
  http://www.arduino.cc/en/Tutorial/ConsoleRead
 
  */
-
-#include <Console.h>
+#include <Process.h>
+//#include <Console.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+
 const int oneWirePin = 2;
 const int GrifoPin = 4;
 
@@ -43,6 +44,7 @@ boolean statusGrifo = false;
 OneWire oneWireBus(oneWirePin);
 DallasTemperature sensor(&oneWireBus);
 
+Process nodejs;
 
 void setup() {
   // Initialize Console and wait for port to open:
@@ -50,34 +52,34 @@ void setup() {
   pinMode(GrifoPin, OUTPUT);
   
   Bridge.begin();
-  Console.begin();
+  //Console.begin();
   
-  Process nodejs;
-  nodejs.runShellCommandAsynchronously("node /mnt/sda1/arduino/node/server.js");
   
+  nodejs.runShellCommandAsynchronously("node /mnt/sda1/arduino/server.js >/mnt/sda1/arduino/log.log");
+  sensor.begin();  
   // Wait for Console port to connect
-  while (!Console);
+  //while (!Console);
   
-  Console.println("Obteniendo direcciones:");
-  oneWireBus.reset_search();
-  byte addr[8];
+  //Console.println("Obteniendo direcciones:");
+  //oneWireBus.reset_search();
+  //byte addr[8];
    
-  while (oneWireBus.search(addr)) {  
-    Console.print("Address = ");
-    for( int i = 0; i < 8; i++) {
-      Console.print(" 0x");
-      Console.print(addr[i], HEX);
-    }
-    Console.println();
-  }
-  sensor.begin();
-  Console.println("Listo para leer temperaturas");
+  //while (oneWireBus.search(addr)) {  
+    //Console.print("Address = ");
+   // for( int i = 0; i < 8; i++) {
+      //Console.print(" 0x");
+      //Console.print(addr[i], HEX);
+    //}
+    //Console.println();
+  //}
+ 
+  //Console.println("Listo para leer temperaturas");
 
   
 }
 
 void loop() {
-  Console.print(":");
+  //Console.print(":");
 
     
     //int timedelay = 1000;
@@ -88,10 +90,16 @@ void loop() {
    h2o_out = sensor.getTempCByIndex(1);
    
    timedelay =  (h2o_out-h2o_in);
+
+    //if (nodejs.running()) {
+      nodejs.write("A:\r\n");
+      nodejs.write(ambient);
+      nodejs.write("\r\n");
+   // }
     
-    nodejs.write("Ambiente: " + String(ambient,2) );
-    Console.print(" IN:" + String(h2o_in,2) + " OUT:"+ String(h2o_out,2)+ " DIF;" + String(timedelay) );
-    Console.print(" STATUS:" + String(statusGrifo ? "ON":"PARADO") ) ;
+    //nodejs.write("Ambiente: " + String(ambient,2) );
+    //Console.print(" IN:" + String(h2o_in,2) + " OUT:"+ String(h2o_out,2)+ " DIF;" + String(timedelay) );
+    //Console.print(" STATUS:" + String(statusGrifo ? "ON":"PARADO") ) ;
 
         
     if(ambient>10 && (h2o_out>=outMax || h2o_out-h2o_in > difMax)){
@@ -99,27 +107,37 @@ void loop() {
     }else{
       alarm = false;
     }
-    Console.println(" ALARM:" + String(alarm? "SI":"NO")) ;
+    //Console.println(" ALARM:" + String(alarm? "SI":"NO")) ;
     
     if(alarm){
       digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
       //delay(timedelay* 100);                       // wait for a second
       //digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      
+       
       if(!statusGrifo){
         statusGrifo = true;
         digitalWrite(GrifoPin, HIGH);
       }
       
     }else{
-      digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(100);                       // wait for a second
-      digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      
+      if(nodejs.running()){
+        //digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+        parpadea(100);                       // wait for a second
+        //digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+      }else{
+        parpadea(50);
+        parpadea(50);
+        parpadea(50);
+      }
        if(statusGrifo){
           statusGrifo = false;
           digitalWrite(GrifoPin, LOW);
        }     
     }
     delay(1000);  
+}
+void parpadea(int _time){
+         digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+         delay(_time);                       // wait for a second
+         digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW 
 }
